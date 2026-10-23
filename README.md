@@ -1,73 +1,82 @@
-# Peer Pressure Softmod For Xbox 360
-Peer Pressure is a persistent softmod exploit for Xbox 360. It works by making some modifications to the console NAND image and HDD security sectors to trigger a series of DMA attacks during startup which ultimately allow you to run unsigned code. Here's some of the features that Peer Pressure provides, for a complete list see [Softmod Features](../../wiki/Softmod-Features):
-- Removes all code signing restrictions on executables files allowing you to run homebrew applications.
-- Removes licensing and security checks for games, downloadable content, arcade games, indie games, etc.
-- Includes 3 different modes to boot your console allowing you to easily switch between a hacked and retail state.
-- Integrated softmod settings application with auto update functionality that'll alert you when a new update is available.
-- Flash (NAND) write protection to prevent accidental modifications to your console's NAND image which could prevent your console from booting.
-- Boot xell (linux, etc.) on startup by powering the console on via the eject button.
-- Sideload DLLs into games/apps/etc. which can be used for things like loading [RB3Enhanced](https://github.com/RBEnhanced/RB3Enhanced), or allowing older dashboards (blades, NXE) to be used.
-- Boot animation editor that allows for customizing the blades era boot animation.
+# FreePressure Project
 
-Note: Peer Pressure does not support dashlaunch or dashlaunch plugins, for more information on why this is see [Homebrew Comptability](#Homebrew-Compatibility).
+### Help Make Xbox 360 Softmod Open Source!
 
-# Disclaimer
-This softmod exploit will make modifications to your console's NAND image and HDD security sectors which could cause data loss and/or prevent your console from booting. While I have done my best to ensure issues like this should never happen there's always a chance that something could go wrong and require a hardware NAND flasher to recover from. By using this software you are doing so at your own risk and I, Grimdoomer, am in no way responsible for any damage or data loss that may occur as a result of using it.
+[![Join our Discord](https://img.shields.io/badge/Discord-Join%20the%20Community-5865F2?logo=discord&logoColor=white)](https://discord.gg/GSSzA9kBu)
 
-# Requirements
-To use the Peer Pressure softmod you'll need the following:
-- An Xbox 360 console.
-- A mechanical HDD (some SSDs do work but are not recommended, see [HDD/SSD Compatibility](#hddssd-compatibility) ).
-- USB stick.
+**We're looking for Xbox 360 developers who want to help turn Peer Pressure into something much bigger: a software-based softmod with a Custom Freeboot Kernel and the full set of JTAG/RGH capabilities.**
 
-## Console Compatibility
-The peer pressure exploit does not work on all console revisions, specifically the corona and winchester models cannot be used. The following table shows which console revisions are supported by the exploit:
-| Motherboard Revision | Supported |
-| -------------------- | --------- |
-| Xenon | ✔ |
-| Zephyr | ✔ |
-| Falcon | ✔ |
-| Jasper | ✔ |
-| Trinity | ✔ |
-| Corona | ❌ Southbridge has a hardware level fix for the exploit. |
-| Winchester | ❌ Southbridge has a hardware level fix for the exploit. |
+FreePressure is a community-driven, open-source project built around reverse engineering, development, and collaboration. The aim is straightforward: bring the power and features people expect from a Freeboot JTAG/RGH setup to a softmod, and share the work openly with the Xbox 360 community.
 
-## HDD/SSD Compatibility
-To use this exploit you will need a hard drive, it doesn't need to be an official Xbox 360 hard drive, or even formatted, you just need **any** mechanical 2.5" HDD that can be connected to the console. The exploit works by attacking a race condition that exists when reading the security sectors off the HDD. Due to this being timing critical most SSDs will likely not work with the exploit as they respond to read requests faster than the race condition can be exploited. 
+## The Goal: Custom Freeboot Kernel Through a Softmod
 
-During beta testing it was found that * *some* * SSDs will also work with the exploit, with the common factor being ones with DRAM cache were more likely to work with the exploit. You can try to use the exploit with a SSD if you choose, however, for optimal boot times and reliability it's recommended to use a mechanical HDD instead.
+We want FreePressure to grow into a **Custom Freeboot Kernel environment for Xbox 360**, with the goal of bringing the complete Freeboot JTAG/RGH feature set to a software-based softmod.
 
-## How To Install
-For detailed steps on how to install the Peer Pressure softmod please see the [Installation](../../wiki/Installation) page in the wiki.
+That means building on the work already done in **Peer Pressure** and **PeerSlop**, not starting over or spending time re-creating features they already provide. PeerSlop's DashLaunch support is a useful step, and we want to go further by working toward broader Freeboot functionality, dependable plugin support, KV swapping, and compatibility with the tools and patches that make a JTAG/RGH setup so capable.
 
-## Boot Times
-When everything is working correctly the expected boot times should be about ~5 seconds longer than the boot times of an unmodified console. Given that this exploit is based on a race condition if the attack isn't successful the SMC will automatically reboot the console to try again, adding additional time to bootup. However, the exploit typically triggers on the first attempt (results will vary if using a SSD) so this should be an edge case and not the norm.
+### What We Want to Add
 
-Two factors that'll increase the boot times are: how long the HDD takes to spin up and the size of the HDD. When the console is powered on the HDD doesn't spin up until the console tries to communicate with it, and the exploit can't begin until that happens. The longer it takes for the HDD to spin up, the longer the boot times will be. By making a [small modification to the HDD SATA adapter](../../wiki/Quick-Boot-SATA-Mod) you can force the drive to spin up as soon as power is applied rather than waiting for the console to communicate with it. This will shave off ~2-3 seconds from the boot time and is what I personally use on my console. 
+- **Custom Freeboot Kernel & JTAG/RGH Patches** — Develop the kernel and hypervisor changes needed to bring Freeboot's broader capabilities to FreePressure.
+- **DashLaunch & Plugin Support** — Build on existing work and aim for dependable DashLaunch compatibility, including system plugins and the functionality that depends on them.
+- **KV Swap & Related Tools** — Add support for KV swapping and the utilities needed to work with that workflow.
+- **Freeboot Tool Compatibility** — Bring support for useful Freeboot tools and functions that are not already covered by Peer Pressure or PeerSlop.
+- **A More Complete Freeboot Feature Set** — Identify the remaining gaps across both projects and work through them, with the aim of matching the full JTAG/RGH experience.
 
-However, the mod requires precision soldering so if you aren't able to do something like the RGH install with ease you most likely won't be able to perform this mod either. Despite using this on my own console I wouldn't recommend it unless you really want to speed run the boot times.
+The key is to focus on what is **missing**, not to present existing Peer Pressure or PeerSlop features as new achievements. We want real additions, tested properly and documented so other developers can build on them.
 
-When the exploit triggers the HDD needs to be mounted so the file system can be accessed. The time it takes to mount a FATX partition increases linearly with the size of the partition, meaning, the larger the HDD, the longer it takes to mount, the longer the console takes to boot. You can tell how long this takes by how long the console LED's stay on the "stage 2" indicator (top 2 LEDs are illuminated). 
+## Build on Existing Work, Don't Repeat It
 
-# Homebrew Compatibility
-While Peer Pressure will allow you to use homebrew games and applications there are some homebrew applications that aren't supported, namely dashlaunch and dashlaunch "plugins". The reason for this is that dashlaunch plugins all use fixed memory addresses and perform hooks into the Xbox 360 OS (kernel, xam, etc.). This means they're not only competing for the same fixed address space but are also competing to hook the same functions in the Xbox 360 OS. This is why most dashlaunch plugins are incompatible with each other and cannot be loaded at the same time (also why there's a load order).
+Peer Pressure has already done important work to make a software-only Xbox 360 softmod possible. PeerSlop has also extended that work with DashLaunch support. FreePressure should respect both efforts and move forward from where they already stand.
 
-When I decided to make Peer Pressure **I wanted a clean slate to make my own thing** and didn't want to be held back by janky dashlaunch plugins that haven't been updated in 10+ years. Peer Pressure already includes most of the dashlaunch functionality with the exception of loading plugins. There's nothing stopping you from force loading whatever dlls you want, but they'll likely have stability issues and cause built-in softmod features to stop working. For these reasons dashlaunch plugins are strictly not supported, and any bug reports filed while using them will be closed without investigation.
+The first step is to document what Peer Pressure and PeerSlop each support, understand how their implementations differ, and identify the specific features still needed for a fuller Freeboot environment. From there, contributors can work on the gaps, share findings, review changes, and test implementations together.
 
-**If this bothers you you don't have to use it.**
+**The mission: develop a Custom Freeboot Kernel that brings full JTAG/RGH capabilities to an Xbox 360 softmod—and make that work open source.**
 
-For some of the features people currently use dashlaunch plugins for (xbdm, HID controller support, etc.) I would like to add these as mainline features in the future. However, this all depends on time and motivation. For a list of features that are currently planned for the next release see [Feature Requests/Roadmap](../../issues/1).
+## Who We Need
 
-# Where's the Source Code?
-I have decided not to release the source code for this for a few reasons:
-1. Everything I make and release I do for free in my own time. This is a hobby for me and something I do for fun. Given the state of software development I no longer feel the need to release the source code for everything I make just so people can make a million forks of it and kill any motivation I have to work on it. **I make this stuff for myself and not anyone else.**
-2. The world doesn't need 15 "slopsoftmods". It took a LOT of work to not only develop this exploit chain but also package it into an easy to use installer and do testing to try and make sure it wouldn't break someone's console. Making these modifications to your console can cause it to stop working, and I don't see why someone who doesn't understand the risks, work it took to make, or how the OS functions, should be able to clone a turn-key repository, make one change, slap their name on it, and tell people "go download my softmod".
+We'd love to work with people from the Xbox 360 community, especially:
 
-It's inevitable that people will just reverse engineer, modify, and repackage my work as their own. While my work may not be "perfect, bug free, etc.", I have taken utmost care to make sure it's unlikely to cause any harm to your console and that you should always be able to boot into retail mode to recover from anything that goes wrong. Other people copying my work may not do the same. If you don't trust the people making the modifications don't install them.
+- **Kernel and hypervisor developers** who understand Xbox 360 internals and low-level system code.
+- **Reverse engineers** who can investigate Peer Pressure, PeerSlop, and Freeboot implementations.
+- **DashLaunch and plugin developers** who can help with compatibility, plugin loading, and related issues.
+- **Developers familiar with KV swapping and Freeboot tools** who can help bring those workflows into FreePressure.
+- **Testers and documenters** who can verify changes, report issues, explain findings, and keep the project organized.
 
-# Credits
-I wanna give a big thanks to ihatecompvir and InvoxiPlayGames for the Rock Band Blitz entry point, and Máté for the stage 3 improvements that made this all possible.
+You don't need to take on the whole project. A small, well-tested contribution or a useful technical finding can help move FreePressure forward.
 
-Another big thanks to the alpha testers: InvoxiPlayGames, Máté, MrMario2011, Harley David-San, ihatecompvir, xbox7887, and lander. Without them I most likely would have thrown in the towel due to lack of motivation.
+## Project Status and My Role
 
-And a final thank you to everyone who actually helped beta test and work out the final bugs before release. Thanks to your efforts several bugs were fixed before the public release.
+**FreePressure is currently building its contributor community and development effort.** The goal is set; we're looking for people who can help work through the code, implement the missing features, test them, and document the results.
+
+My role is to organize the project, keep the work moving, coordinate contributors, and help with planning and documentation. I'm not claiming to be the creator of Peer Pressure or the developer of its original exploit. The aim is to bring the right people together and help turn this shared goal into a serious open-source project.
+
+## Join Us on Discord
+
+**If you're interested in helping, join the Discord and work with us there.** It's the main place to meet other contributors, discuss the technical work, share research, figure out priorities, and coordinate development. Whether you can contribute code, reverse engineering, testing, or documentation, we'd be glad to have you involved.
+
+[![Join our Discord](https://img.shields.io/badge/Discord-Join%20the%20Community-5865F2?logo=discord&logoColor=white)](https://discord.gg/GSSzA9kBu)
+
+GitHub will be used to organize the source code, issues, documentation, and contributions. Discord is where we can talk through the work and collaborate as a community.
+
+## Community First
+
+The Xbox 360 open-source community deserves shared knowledge, constructive collaboration, and projects that build on each other's work. Let's put our energy into research, development, and making useful things together instead of unnecessary drama.
+
+**Xbox 360 open-source development deserves better than closed-source drama.** Let's work together and build something the community can be proud of.
+
+## Credits and Acknowledgements
+
+### Grimdoomer — Creator of Peer Pressure
+
+A huge thank you to **Grimdoomer** for creating Peer Pressure and making this initiative possible. His work provides the foundation that FreePressure aims to build on. We appreciate the research and engineering behind the original project, and we want to keep its creator and contributions properly credited as the community explores what comes next.
+
+### Peer Pressure Contributors and Testers
+
+Thanks to **ihatecompvir** and **InvoxiPlayGames** for the Rock Band Blitz entry point, and to **Máté** for the stage 3 improvements that helped make Peer Pressure possible.
+
+Thanks also to : **InvoxiPlayGames, Máté, MrMario2011, Harley David-San, ihatecompvir, xbox7887, and lander**. 
+Thank you to everyone in the Xbox 360 homebrew community who continues to research, develop, test, document, and preserve this platform. FreePressure builds on the work and knowledge of people who came before us, and that work deserves recognition and respect.
+
+---
+
+*FreePressure is an independent, community-driven initiative inspired by Peer Pressure. It is not an official project of Grimdoomer or the original contributors unless they explicitly state otherwise. Peer Pressure's original work remains credited to its respective authors and is subject to its applicable license. Please review the original project's license before redistributing or reusing its code.*
